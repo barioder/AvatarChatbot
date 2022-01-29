@@ -13,50 +13,50 @@ def record_audio(ask=False):
     # to use the microphone as our source
     with sr.Microphone() as source:
         if ask:
-            print(ask)
+            doBot_speak(ask)
         # use the recogniser object with the listen() to say something said to the bot
         audio = r.listen(source)
         voice_data = ''
         try:
             voice_data = r.recognize_google(audio)
         except sr.UnknownValueError:
-            print('Please say that again, I did not get that')
+            doBot_speak('Please say that again, I did not get that')
         except sr.RequestError:
-            print('OPPS!! MY SPEECH SERVICE IS DOWN')
+            doBot_speak('OPPS!! MY SPEECH SERVICE IS DOWN')
 
         return voice_data
 
+
 def doBot_speak(audio_string):
     tts = gTTS(text=audio_string, lang='en')
-    r = random.randint(1, 10000)
-    audi_file = 'audio-' + str(r) + '.mp3'
-    tts.save(audi_file)
-    playsound.playsound(audi_file)
+    rn = random.randint(1, 10000)
+    audio_file = 'audio-' + str(rn) + '.mp3'
+    tts.save(audio_file)
+    playsound.playsound(audio_file)
     print(audio_string)
-    os.remove(audi_file)
+    os.remove(audio_file)
 
 def response(voice_command):
     if 'what is your name' in voice_command:
-        print('My name is THE DO BOT')
+        doBot_speak('My name is THE DO BOT')
     if 'what time is it' in voice_command:
-        print(datetime.datetime.now())
+        doBot_speak(datetime.datetime.now())
 
     if 'search Google' in voice_command:
         search = record_audio('What do you want to search for?')
         url = 'https://google.com/search?q=' + search
         webbrowser.get().open(url)
-        print('I hope these are the results expected for ' + search)
+        doBot_speak('I hope these are the results expected for ' + search)
 
     if 'find location' in voice_command:
         location = record_audio('What Place do you want to find?')
-        print('Finding location . . . ')
+        doBot_speak('Finding location . . . ')
         url = 'https://google.nl/maps/place/' + location
         webbrowser.get().open(url)
-        print('I hope I did a good job finding ' + location + '/&amp;')
+        doBot_speak('I hope I did a good job finding ' + location + '/&amp;')
 
 
-
-print('Tell me how I can help you')
+doBot_speak('Tell me how I can help you')
 voice_data = record_audio()
 print(voice_data)
 
