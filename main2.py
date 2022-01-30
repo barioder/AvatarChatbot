@@ -13,7 +13,7 @@ root = tk.Tk()
 
 canvas = tk.Canvas(root, width=300, height=300)
 
-canvas.grid(columnspan=3)
+canvas.grid(columnspan=6, rowspan=3)
 
 def sayWhat():
 
@@ -35,6 +35,7 @@ def runBot():
                 voice_data = r.recognize_google(audio)
             except sr.UnknownValueError:
                 doBot_speak('Please say that again, I did not get that')
+                runBot()
             except sr.RequestError:
                 doBot_speak('OPPS!! MY SPEECH SERVICE IS DOWN')
 
@@ -47,30 +48,49 @@ def runBot():
         tts.save(audio_file)
         playsound.playsound(audio_file)
         print(audio_string)
+        # instructions = tk.Label(root, text=audio_string)
+        # instructions.grid( column=0, row=1)
         os.remove(audio_file)
 
     def response(voice_command):
         if 'what is your name' in voice_command:
             doBot_speak('My name is THE DO BOT')
+            instructions = tk.Label(root, text='My name is the DO BOT')
+            instructions.grid(column=0, row=1)
+
+
         if 'what time is it' in voice_command:
             doBot_speak(datetime.datetime.now())
 
-        if 'search Google' in voice_command:
+        if 'Google' in voice_command:
             search = record_audio('What do you want to search for?')
             url = 'https://google.com/search?q=' + search
             webbrowser.get().open(url)
+            instructions = tk.Label(root, text='Results for '+search)
+            instructions.grid(column=0, row=1)
+
             doBot_speak('I hope these are the results expected for ' + search)
 
-        if 'find location' in voice_command:
+        if 'place' in voice_command:
             location = record_audio('What Place do you want to find?')
-            doBot_speak('Finding location . . . ')
-            url = 'https://google.nl/maps/place/' + location
+            doBot_speak(f'Finding {location} . . . ')
+            url = 'https://google.com/maps/place/' + location
             webbrowser.get().open(url)
-            doBot_speak('I hope I did a good job finding ' + location + '/&amp;')
+            doBot_speak('I hope I did a good job finding ' + location)
+
+        if 'YouTube' in voice_command:
+            videoWanted = record_audio('What Video do you want to find on YouTube')
+            url = 'https://www.youtube.com/results?search_query=' + videoWanted
+            webbrowser.get().open(url)
+            videodata = tk.Label(root, text='YouTube results for '+videoWanted)
+            videodata.grid(column=0, row=2)
 
     doBot_speak('Tell me how I can help you')
+
     voice_data = record_audio()
     print(voice_data)
+    saidWords = tk.Label(root, text=f'User\'s words: {voice_data}')
+    saidWords.grid(column=0, row=0)
 
     response(voice_data)
 
@@ -78,8 +98,8 @@ def runBot():
 # Button to run chatBot
 text = tk.StringVar()
 runButton = tk.Button(root, textvariable=text, command=lambda: runBot(), )
-text.set("RUN")
-runButton.grid(column=1, row=2)
+text.set("RUN BOT")
+runButton.grid(column=2, row=2)
 
 # the end of the window object
 root.mainloop()
